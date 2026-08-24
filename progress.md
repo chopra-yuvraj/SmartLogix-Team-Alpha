@@ -40,6 +40,12 @@ The monorepo structure, core backend services, Go DVRP solver, FastAPI orchestra
     *   Completed full UI overhaul for Shipper and Driver portals using a premium dark aesthetic with `lucide-react` icons.
     *   Fixed 41 static analysis (Mypy) errors across the FastAPI backend (`db.py`, `clustering.py`, `shipments.py`, `certificate.py`, `main.py`).
 
+8.  **Phase 11 (Initial Deployment)**
+    *   **Frontend**: Deployed to Vercel correctly linking to the backend.
+    *   **Backend**: Deployed `apps/gateway` and `apps/solver` to Render's free tier manually (bypassing Blueprint to avoid CC requirements).
+    *   **OSRM Hack**: Instead of hosting the 400MB+ OSRM map data, the Gateway and Solver point to the public `http://router.project-osrm.org` demo API via the `OSRM_URL` env variable.
+    *   **24/7 UptimeRobot Hack**: Configured UptimeRobot to hit `HEAD /health` on both Render services every 5 mins. Modified the Gateway (`@app.head("/health")`) and Solver (`r.Head("/health")` & `PORT` env var injection) to natively accept `HEAD` requests and bind to the correct Render port, preventing the free tier from spinning down.
+
 ### Next Steps for the Incoming Model
 
 When you resume, please pick up from here:

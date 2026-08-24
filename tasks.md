@@ -240,8 +240,10 @@ Tags: **[PERF]** = needs a passing benchmark/load test. **[RLS]** = needs a Row-
 
 - [ ] 11.1 Flesh out `.github/workflows/ci.yml`: lint + test + build for all three apps on every PR; block merge on failure.
 - [ ] 11.2 `supabase/migrations` applied automatically in CI against an ephemeral Postgres to catch migration errors before merge.
-- [ ] 11.3 Deployment workflow: `apps/web` → Vercel (connect repo, env vars configured in Vercel dashboard, documented in `docs/`). `apps/gateway` and `apps/solver` → chosen container host, one Dockerfile-based deploy each, documented step by step.
-- [ ] 11.4 Production OSRM: document (and, if the agent has infra access, actually provision) a small always-on VM or container running the full India (or chosen-region) OSRM extract, since the local dev extract from Phase 0.5 is intentionally small.
+- [x] 11.3 Deployment workflow: `apps/web` → Vercel (connect repo, env vars configured in Vercel dashboard, documented in `docs/`). `apps/gateway` and `apps/solver` → chosen container host, one Dockerfile-based deploy each, documented step by step.
+  ✅ Done. Frontend is live on Vercel. Gateway and Solver are live on Render as individual Web Services.
+- [x] 11.4 Production OSRM: document (and, if the agent has infra access, actually provision) a small always-on VM or container running the full India (or chosen-region) OSRM extract, since the local dev extract from Phase 0.5 is intentionally small.
+  ✅ Done (Skipped). Rather than hosting a large OSRM container on a free tier, we pointed both the Gateway and Solver to the public `router.project-osrm.org` API.
 - [ ] 11.5 Supabase production project: run migrations against it, confirm RLS is active (not just present in migration files — actually query as an anon/unauthorized client and confirm rejection).
 - [ ] 11.6 Smoke test script run against the deployed environment covering the same critical path as Phase 10.3.
 
@@ -280,4 +282,5 @@ Tags: **[PERF]** = needs a passing benchmark/load test. **[RLS]** = needs a Row-
 
 *(Agent: record anything here where you had to depart from a task as written, with the reason and what you did instead. Do not leave a task silently unfinished without an entry here.)*
 
--
+- Phase 11 (Deployment): Skipped using `render.yaml` Blueprint to avoid requiring credit card details on Render. Instead, `apps/gateway` and `apps/solver` were deployed manually as separate Render Web Services on the Free Tier.
+- Phase 11 (OSRM Deployment): Skipped deploying `infra/osrm` entirely. Because the pre-built `data/` folder is >400MB, it cannot be pushed to GitHub, and building OSM data dynamically on Render's free tier exceeds CPU/RAM limits. We successfully bypassed this by pointing both Gateway and Solver to the public `http://router.project-osrm.org` API for the hackathon.
