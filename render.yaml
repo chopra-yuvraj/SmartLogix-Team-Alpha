@@ -1,0 +1,43 @@
+services:
+  # 1. OSRM Routing Service (Docker)
+  - type: web
+    name: smartlogix-osrm
+    env: docker
+    dockerContext: ./infra/osrm
+    dockerfilePath: ./infra/osrm/Dockerfile
+    envVars:
+      - key: PORT
+        value: "5000"
+
+  # 2. Go Solver Microservice (Docker)
+  - type: web
+    name: smartlogix-solver
+    env: docker
+    dockerContext: ./apps/solver
+    dockerfilePath: ./apps/solver/Dockerfile
+    envVars:
+      - key: OSRM_BASE_URL
+        fromService:
+          type: web
+          name: smartlogix-osrm
+          envVarKey: RENDER_EXTERNAL_URL
+
+  # 3. FastAPI Gateway (Docker)
+  - type: web
+    name: smartlogix-gateway
+    env: docker
+    dockerContext: ./apps/gateway
+    dockerfilePath: ./apps/gateway/Dockerfile
+    envVars:
+      - key: SOLVER_URL_OVERRIDE
+        fromService:
+          type: web
+          name: smartlogix-solver
+          envVarKey: RENDER_EXTERNAL_URL
+      - key: OSRM_BASE_URL
+        fromService:
+          type: web
+          name: smartlogix-osrm
+          envVarKey: RENDER_EXTERNAL_URL
+      # You MUST manually add SUPABASE_URL, SUPABASE_ANON_KEY, and SUPABASE_SERVICE_ROLE_KEY
+      # in the Render Dashboard for the gateway service for security reasons.

@@ -13,7 +13,7 @@ the response. No business logic here (rules.md §5).
 
 import logging
 import uuid
-from typing import Annotated
+from typing import Annotated, Any, cast
 
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, status
 
@@ -29,7 +29,6 @@ from schemas import (
 from services.auth import AuthenticatedUser, get_current_user, require_shipper
 from services.clustering import clustering_service
 from services.db import db_service
-from services.glec import glec_service
 
 logger = logging.getLogger(__name__)
 
@@ -135,7 +134,8 @@ async def track_shipment(
         ).in_("status", ["active", "awarded"]).limit(1).execute()
 
         if routes_result.data:
-            route_id = routes_result.data[0]["id"]
+            route_data = cast(list[dict[str, Any]], routes_result.data)
+            route_id = str(route_data[0]["id"])
             pings = await db_service.get_latest_telemetry(route_id, limit=5)
             latest_pings = [
                 TelemetryPingResponse(
@@ -211,7 +211,7 @@ async def upload_proof_of_delivery(
 @router.get("/list")
 async def list_shipments(
     user: Annotated[AuthenticatedUser, Depends(require_shipper)],
-):
+) -> dict[str, list[dict[str, Any]]]:
     """GET /api/v1/shipment/list — List shipper's shipments."""
     shipments = await db_service.get_shipments_by_shipper(user.user_id)
     return {"shipments": shipments}

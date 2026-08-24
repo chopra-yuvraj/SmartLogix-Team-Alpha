@@ -5,7 +5,7 @@ Thin, testable layer over supabase-py so route handlers never
 call supabase-py directly. All DB access goes through this module.
 """
 
-from typing import Any
+from typing import Any, cast
 
 from supabase import create_client, Client
 
@@ -43,7 +43,7 @@ class DBService:
     async def create_shipment(self, data: dict[str, Any]) -> dict[str, Any]:
         """Insert a new shipment and return the created row."""
         result = self._client.table("shipments").insert(data).execute()
-        return result.data[0] if result.data else {}
+        return cast(dict[str, Any], result.data[0]) if result.data else {}
 
     async def get_shipment(self, shipment_id: str) -> dict[str, Any] | None:
         """Get a shipment by ID."""
@@ -53,7 +53,7 @@ class DBService:
             .eq("id", shipment_id)
             .execute()
         )
-        return result.data[0] if result.data else None
+        return cast(dict[str, Any], result.data[0]) if result.data else None
 
     async def get_shipments_by_shipper(self, shipper_id: str) -> list[dict[str, Any]]:
         """Get all shipments for a shipper."""
@@ -64,7 +64,7 @@ class DBService:
             .order("created_at", desc=True)
             .execute()
         )
-        return result.data or []
+        return cast(list[dict[str, Any]], result.data) if result.data else []
 
     async def update_shipment_status(
         self, shipment_id: str, status: str
@@ -76,7 +76,7 @@ class DBService:
             .eq("id", shipment_id)
             .execute()
         )
-        return result.data[0] if result.data else None
+        return cast(dict[str, Any], result.data[0]) if result.data else None
 
     # ---- Corridors ----
 
@@ -86,7 +86,7 @@ class DBService:
         if active_only:
             query = query.eq("active", True)
         result = query.execute()
-        return result.data or []
+        return cast(list[dict[str, Any]], result.data) if result.data else []
 
     async def get_corridor(self, corridor_id: str) -> dict[str, Any] | None:
         """Get a corridor by ID."""
@@ -96,14 +96,14 @@ class DBService:
             .eq("id", corridor_id)
             .execute()
         )
-        return result.data[0] if result.data else None
+        return cast(dict[str, Any], result.data[0]) if result.data else None
 
     # ---- Routes ----
 
     async def create_route(self, data: dict[str, Any]) -> dict[str, Any]:
         """Insert a new route."""
         result = self._client.table("routes").insert(data).execute()
-        return result.data[0] if result.data else {}
+        return cast(dict[str, Any], result.data[0]) if result.data else {}
 
     async def get_route(self, route_id: str) -> dict[str, Any] | None:
         """Get a route by ID."""
@@ -113,7 +113,7 @@ class DBService:
             .eq("id", route_id)
             .execute()
         )
-        return result.data[0] if result.data else None
+        return cast(dict[str, Any], result.data[0]) if result.data else None
 
     async def update_route(
         self, route_id: str, data: dict[str, Any]
@@ -125,14 +125,14 @@ class DBService:
             .eq("id", route_id)
             .execute()
         )
-        return result.data[0] if result.data else None
+        return cast(dict[str, Any], result.data[0]) if result.data else None
 
     # ---- Bids ----
 
     async def create_bid(self, data: dict[str, Any]) -> dict[str, Any]:
         """Insert a new bid."""
         result = self._client.table("bids").insert(data).execute()
-        return result.data[0] if result.data else {}
+        return cast(dict[str, Any], result.data[0]) if result.data else {}
 
     async def get_bids_for_route(self, route_id: str) -> list[dict[str, Any]]:
         """Get all bids for a route."""
@@ -143,7 +143,7 @@ class DBService:
             .order("bid_amount_paise", desc=False)
             .execute()
         )
-        return result.data or []
+        return cast(list[dict[str, Any]], result.data) if result.data else []
 
     async def update_bid_status(
         self, bid_id: str, status: str
@@ -155,7 +155,7 @@ class DBService:
             .eq("id", bid_id)
             .execute()
         )
-        return result.data[0] if result.data else None
+        return cast(dict[str, Any], result.data[0]) if result.data else None
 
     # ---- Carrier Keys ----
 
@@ -169,7 +169,7 @@ class DBService:
             .limit(1)
             .execute()
         )
-        return result.data[0] if result.data else None
+        return cast(dict[str, Any], result.data[0]) if result.data else None
 
     # ---- Vehicles ----
 
@@ -185,14 +185,14 @@ class DBService:
         if carrier_id:
             query = query.eq("carrier_id", carrier_id)
         result = query.execute()
-        return result.data or []
+        return cast(list[dict[str, Any]], result.data) if result.data else []
 
     # ---- Telemetry ----
 
     async def insert_telemetry(self, data: dict[str, Any]) -> dict[str, Any]:
         """Insert a telemetry ping."""
         result = self._client.table("telemetry_pings").insert(data).execute()
-        return result.data[0] if result.data else {}
+        return cast(dict[str, Any], result.data[0]) if result.data else {}
 
     async def get_latest_telemetry(
         self, route_id: str, limit: int = 10
@@ -206,21 +206,21 @@ class DBService:
             .limit(limit)
             .execute()
         )
-        return result.data or []
+        return cast(list[dict[str, Any]], result.data) if result.data else []
 
     # ---- Green Credits ----
 
     async def insert_green_credit(self, data: dict[str, Any]) -> dict[str, Any]:
         """Insert a green credit record."""
         result = self._client.table("green_credits").insert(data).execute()
-        return result.data[0] if result.data else {}
+        return cast(dict[str, Any], result.data[0]) if result.data else {}
 
     # ---- Notifications ----
 
     async def insert_notification(self, data: dict[str, Any]) -> dict[str, Any]:
         """Insert a notification."""
         result = self._client.table("notifications").insert(data).execute()
-        return result.data[0] if result.data else {}
+        return cast(dict[str, Any], result.data[0]) if result.data else {}
 
     async def get_notifications(
         self, profile_id: str, limit: int = 50
@@ -234,7 +234,7 @@ class DBService:
             .limit(limit)
             .execute()
         )
-        return result.data or []
+        return cast(list[dict[str, Any]], result.data) if result.data else []
 
     # ---- Proof of Delivery ----
 
@@ -243,7 +243,7 @@ class DBService:
     ) -> dict[str, Any]:
         """Insert a proof of delivery record."""
         result = self._client.table("proof_of_delivery").insert(data).execute()
-        return result.data[0] if result.data else {}
+        return cast(dict[str, Any], result.data[0]) if result.data else {}
 
     # ---- Profiles ----
 
@@ -255,7 +255,7 @@ class DBService:
             .eq("id", profile_id)
             .execute()
         )
-        return result.data[0] if result.data else None
+        return cast(dict[str, Any], result.data[0]) if result.data else None
 
 
 # Singleton for dependency injection

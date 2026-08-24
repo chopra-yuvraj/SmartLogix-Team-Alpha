@@ -10,6 +10,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase-browser";
+import { Mail, Phone, ArrowLeft, Loader2 } from "lucide-react";
 
 type LoginMode = "shipper" | "driver";
 
@@ -79,144 +80,160 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 flex items-center justify-center px-4">
-      <div className="w-full max-w-md">
+    <main className="relative min-h-screen bg-gray-950 flex items-center justify-center px-4">
+      {/* Ambient glow */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 h-[500px] w-[600px] rounded-full bg-blue-600/6 blur-[120px]" />
+      </div>
+
+      <div className="relative z-10 w-full max-w-[400px]">
+        {/* Back link */}
+        <Link
+          href="/"
+          className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-300 transition-colors mb-8"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" />
+          Back
+        </Link>
+
         {/* Logo */}
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2">
-            <div className="h-10 w-10 rounded-xl bg-blue-500 flex items-center justify-center font-bold text-white">
-              SL
-            </div>
-            <span className="text-2xl font-bold text-white tracking-tight">
-              SmartLogix
-            </span>
-          </Link>
+        <div className="flex items-center gap-3 mb-8">
+          <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center font-bold text-sm shadow-lg shadow-blue-500/20">
+            SL
+          </div>
+          <span className="text-xl font-semibold tracking-tight">
+            SmartLogix
+          </span>
         </div>
 
-        {/* Card */}
-        <div className="rounded-2xl border border-slate-700/50 bg-slate-800/60 backdrop-blur-xl p-8 shadow-2xl">
-          <h1 className="text-xl font-semibold text-white mb-6">Sign In</h1>
+        <h1 className="text-2xl font-bold mb-1">Welcome back</h1>
+        <p className="text-sm text-gray-500 mb-8">Sign in to your account to continue.</p>
 
-          {/* Mode Toggle */}
-          <div className="flex rounded-xl bg-slate-700/50 p-1 mb-6">
-            <button
-              onClick={() => setMode("shipper")}
-              className={`flex-1 rounded-lg py-2.5 text-sm font-medium transition-all ${
-                mode === "shipper"
-                  ? "bg-blue-600 text-white shadow-lg"
-                  : "text-slate-400 hover:text-white"
-              }`}
-            >
-              Shipper (Email)
-            </button>
-            <button
-              onClick={() => setMode("driver")}
-              className={`flex-1 rounded-lg py-2.5 text-sm font-medium transition-all ${
-                mode === "driver"
-                  ? "bg-blue-600 text-white shadow-lg"
-                  : "text-slate-400 hover:text-white"
-              }`}
-            >
-              Driver (Phone)
-            </button>
+        {/* Mode Toggle */}
+        <div className="flex rounded-lg bg-white/[0.04] border border-white/[0.06] p-1 mb-6">
+          <button
+            onClick={() => setMode("shipper")}
+            className={`flex-1 flex items-center justify-center gap-2 rounded-md py-2 text-sm font-medium transition-all ${
+              mode === "shipper"
+                ? "bg-white/[0.08] text-white shadow-sm"
+                : "text-gray-500 hover:text-gray-300"
+            }`}
+          >
+            <Mail className="h-3.5 w-3.5" />
+            Shipper
+          </button>
+          <button
+            onClick={() => setMode("driver")}
+            className={`flex-1 flex items-center justify-center gap-2 rounded-md py-2 text-sm font-medium transition-all ${
+              mode === "driver"
+                ? "bg-white/[0.08] text-white shadow-sm"
+                : "text-gray-500 hover:text-gray-300"
+            }`}
+          >
+            <Phone className="h-3.5 w-3.5" />
+            Driver
+          </button>
+        </div>
+
+        {error && (
+          <div className="mb-4 rounded-lg bg-red-500/10 border border-red-500/20 p-3 text-sm text-red-400">
+            {error}
           </div>
+        )}
 
-          {error && (
-            <div className="mb-4 rounded-lg bg-red-500/10 border border-red-500/30 p-3 text-sm text-red-400">
-              {error}
+        {mode === "shipper" ? (
+          <form onSubmit={handleShipperLogin} className="space-y-4">
+            <div>
+              <label className="block text-sm text-gray-400 mb-1.5">
+                Email
+              </label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-3.5 py-2.5 text-sm text-white placeholder:text-gray-600 focus:border-blue-500/50 focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition-colors"
+                placeholder="you@company.com"
+                required
+              />
             </div>
-          )}
-
-          {mode === "shipper" ? (
-            <form onSubmit={handleShipperLogin} className="space-y-4">
-              <div>
-                <label className="block text-sm text-slate-400 mb-1.5">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-2.5 text-white placeholder:text-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  placeholder="you@company.com"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm text-slate-400 mb-1.5">
-                  Password
-                </label>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-2.5 text-white placeholder:text-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  placeholder="••••••••"
-                  required
-                />
-              </div>
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full rounded-lg bg-blue-600 py-2.5 text-sm font-semibold text-white hover:bg-blue-500 transition-colors disabled:opacity-50"
-              >
-                {loading ? "Signing in..." : "Sign In"}
-              </button>
-            </form>
-          ) : (
-            <form
-              onSubmit={otpSent ? handleVerifyOTP : (e) => { e.preventDefault(); handleSendOTP(); }}
-              className="space-y-4"
+            <div>
+              <label className="block text-sm text-gray-400 mb-1.5">
+                Password
+              </label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-3.5 py-2.5 text-sm text-white placeholder:text-gray-600 focus:border-blue-500/50 focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition-colors"
+                placeholder="••••••••"
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full flex items-center justify-center gap-2 rounded-lg bg-blue-600 py-2.5 text-sm font-semibold text-white hover:bg-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
+              {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+              {loading ? "Signing in..." : "Sign In"}
+            </button>
+          </form>
+        ) : (
+          <form
+            onSubmit={otpSent ? handleVerifyOTP : (e) => { e.preventDefault(); handleSendOTP(); }}
+            className="space-y-4"
+          >
+            <div>
+              <label className="block text-sm text-gray-400 mb-1.5">
+                Phone Number
+              </label>
+              <input
+                type="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                className="w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-3.5 py-2.5 text-sm text-white placeholder:text-gray-600 focus:border-blue-500/50 focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition-colors"
+                placeholder="+91 98765 43210"
+                required
+                disabled={otpSent}
+              />
+            </div>
+            {otpSent && (
               <div>
-                <label className="block text-sm text-slate-400 mb-1.5">
-                  Phone Number
+                <label className="block text-sm text-gray-400 mb-1.5">
+                  OTP Code
                 </label>
                 <input
-                  type="tel"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-2.5 text-white placeholder:text-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  placeholder="+91 98765 43210"
+                  type="text"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  className="w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-3.5 py-2.5 text-sm text-white placeholder:text-gray-600 focus:border-blue-500/50 focus:outline-none focus:ring-1 focus:ring-blue-500/50 text-center text-lg tracking-[0.3em] transition-colors"
+                  placeholder="000000"
+                  maxLength={6}
                   required
-                  disabled={otpSent}
                 />
               </div>
-              {otpSent && (
-                <div>
-                  <label className="block text-sm text-slate-400 mb-1.5">
-                    OTP Code
-                  </label>
-                  <input
-                    type="text"
-                    value={otp}
-                    onChange={(e) => setOtp(e.target.value)}
-                    className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-2.5 text-white placeholder:text-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-center text-lg tracking-widest"
-                    placeholder="123456"
-                    maxLength={6}
-                    required
-                  />
-                </div>
-              )}
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full rounded-lg bg-blue-600 py-2.5 text-sm font-semibold text-white hover:bg-blue-500 transition-colors disabled:opacity-50"
-              >
-                {loading
-                  ? "Please wait..."
-                  : otpSent
-                    ? "Verify OTP"
-                    : "Send OTP"}
-              </button>
-            </form>
-          )}
+            )}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full flex items-center justify-center gap-2 rounded-lg bg-blue-600 py-2.5 text-sm font-semibold text-white hover:bg-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+              {loading
+                ? "Please wait..."
+                : otpSent
+                  ? "Verify OTP"
+                  : "Send OTP"}
+            </button>
+          </form>
+        )}
 
-          <p className="mt-6 text-center text-sm text-slate-500">
+        <div className="mt-8 pt-6 border-t border-white/[0.06]">
+          <p className="text-center text-sm text-gray-500">
             Don&apos;t have an account?{" "}
             <Link
               href="/auth/signup"
-              className="text-blue-400 hover:text-blue-300"
+              className="text-blue-400 hover:text-blue-300 font-medium"
             >
               Sign up
             </Link>

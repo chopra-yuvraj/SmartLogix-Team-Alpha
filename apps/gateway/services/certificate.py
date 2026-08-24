@@ -25,6 +25,7 @@ from reportlab.platypus import (
     Table,
     TableStyle,
     Image,
+    Flowable,
 )
 
 from services.db import DBService, db_service
@@ -59,7 +60,7 @@ class CertificateService:
         )
 
         styles = getSampleStyleSheet()
-        elements = []
+        elements: list[Flowable] = []
 
         # Title
         title_style = styles["Title"]

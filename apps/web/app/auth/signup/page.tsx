@@ -8,6 +8,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase-browser";
+import { ArrowLeft, Loader2, Mail, CheckCircle2 } from "lucide-react";
 
 type Role = "shipper" | "driver";
 
@@ -69,21 +70,25 @@ export default function SignupPage() {
 
   if (success) {
     return (
-      <main className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 flex items-center justify-center px-4">
-        <div className="w-full max-w-md rounded-2xl border border-slate-700/50 bg-slate-800/60 backdrop-blur-xl p-8 text-center">
-          <div className="text-5xl mb-4">📧</div>
-          <h1 className="text-xl font-semibold text-white mb-2">
-            Check Your Email
-          </h1>
-          <p className="text-slate-400 text-sm">
-            We sent a verification link to <strong>{email}</strong>.
+      <main className="relative min-h-screen bg-gray-950 flex items-center justify-center px-4">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 h-[500px] w-[600px] rounded-full bg-emerald-600/6 blur-[120px]" />
+        </div>
+        <div className="relative z-10 w-full max-w-[400px] text-center">
+          <div className="inline-flex items-center justify-center h-14 w-14 rounded-full bg-emerald-500/10 border border-emerald-500/20 mb-6">
+            <CheckCircle2 className="h-7 w-7 text-emerald-400" />
+          </div>
+          <h1 className="text-2xl font-bold mb-2">Check Your Email</h1>
+          <p className="text-sm text-gray-500 mb-6">
+            We sent a verification link to <span className="text-gray-300 font-medium">{email}</span>.
             Click it to activate your account.
           </p>
           <Link
             href="/auth/login"
-            className="mt-6 inline-block text-blue-400 hover:text-blue-300 text-sm"
+            className="inline-flex items-center gap-1.5 text-sm text-blue-400 hover:text-blue-300 font-medium"
           >
-            ← Back to login
+            <ArrowLeft className="h-3.5 w-3.5" />
+            Back to login
           </Link>
         </div>
       </main>
@@ -91,136 +96,151 @@ export default function SignupPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 flex items-center justify-center px-4">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2">
-            <div className="h-10 w-10 rounded-xl bg-blue-500 flex items-center justify-center font-bold text-white">
-              SL
-            </div>
-            <span className="text-2xl font-bold text-white tracking-tight">
-              SmartLogix
-            </span>
-          </Link>
+    <main className="relative min-h-screen bg-gray-950 flex items-center justify-center px-4 py-12">
+      {/* Ambient glow */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 h-[500px] w-[600px] rounded-full bg-blue-600/6 blur-[120px]" />
+      </div>
+
+      <div className="relative z-10 w-full max-w-[400px]">
+        {/* Back link */}
+        <Link
+          href="/"
+          className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-300 transition-colors mb-8"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" />
+          Back
+        </Link>
+
+        {/* Logo */}
+        <div className="flex items-center gap-3 mb-8">
+          <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center font-bold text-sm shadow-lg shadow-blue-500/20">
+            SL
+          </div>
+          <span className="text-xl font-semibold tracking-tight">
+            SmartLogix
+          </span>
         </div>
 
-        <div className="rounded-2xl border border-slate-700/50 bg-slate-800/60 backdrop-blur-xl p-8 shadow-2xl">
-          <h1 className="text-xl font-semibold text-white mb-6">
-            Create Account
-          </h1>
+        <h1 className="text-2xl font-bold mb-1">Create your account</h1>
+        <p className="text-sm text-gray-500 mb-8">Get started with SmartLogix in minutes.</p>
 
-          <div className="flex rounded-xl bg-slate-700/50 p-1 mb-6">
-            <button
-              onClick={() => setRole("shipper")}
-              className={`flex-1 rounded-lg py-2.5 text-sm font-medium transition-all ${
-                role === "shipper"
-                  ? "bg-blue-600 text-white shadow-lg"
-                  : "text-slate-400 hover:text-white"
-              }`}
-            >
-              Shipper
-            </button>
-            <button
-              onClick={() => setRole("driver")}
-              className={`flex-1 rounded-lg py-2.5 text-sm font-medium transition-all ${
-                role === "driver"
-                  ? "bg-blue-600 text-white shadow-lg"
-                  : "text-slate-400 hover:text-white"
-              }`}
-            >
-              Driver
-            </button>
+        {/* Role Toggle */}
+        <div className="flex rounded-lg bg-white/[0.04] border border-white/[0.06] p-1 mb-6">
+          <button
+            onClick={() => setRole("shipper")}
+            className={`flex-1 flex items-center justify-center gap-2 rounded-md py-2 text-sm font-medium transition-all ${
+              role === "shipper"
+                ? "bg-white/[0.08] text-white shadow-sm"
+                : "text-gray-500 hover:text-gray-300"
+            }`}
+          >
+            <Mail className="h-3.5 w-3.5" />
+            Shipper
+          </button>
+          <button
+            onClick={() => setRole("driver")}
+            className={`flex-1 flex items-center justify-center gap-2 rounded-md py-2 text-sm font-medium transition-all ${
+              role === "driver"
+                ? "bg-white/[0.08] text-white shadow-sm"
+                : "text-gray-500 hover:text-gray-300"
+            }`}
+          >
+            Driver
+          </button>
+        </div>
+
+        {error && (
+          <div className="mb-4 rounded-lg bg-red-500/10 border border-red-500/20 p-3 text-sm text-red-400">
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSignup} className="space-y-4">
+          <div>
+            <label className="block text-sm text-gray-400 mb-1.5">
+              Full Name
+            </label>
+            <input
+              type="text"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              className="w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-3.5 py-2.5 text-sm text-white placeholder:text-gray-600 focus:border-blue-500/50 focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition-colors"
+              required
+            />
           </div>
 
-          {error && (
-            <div className="mb-4 rounded-lg bg-red-500/10 border border-red-500/30 p-3 text-sm text-red-400">
-              {error}
-            </div>
-          )}
-
-          <form onSubmit={handleSignup} className="space-y-4">
-            <div>
-              <label className="block text-sm text-slate-400 mb-1.5">
-                Full Name
-              </label>
-              <input
-                type="text"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-2.5 text-white placeholder:text-slate-500 focus:border-blue-500 focus:outline-none"
-                required
-              />
-            </div>
-
-            {role === "shipper" ? (
-              <>
-                <div>
-                  <label className="block text-sm text-slate-400 mb-1.5">
-                    Company Name
-                  </label>
-                  <input
-                    type="text"
-                    value={companyName}
-                    onChange={(e) => setCompanyName(e.target.value)}
-                    className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-2.5 text-white placeholder:text-slate-500 focus:border-blue-500 focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm text-slate-400 mb-1.5">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-2.5 text-white placeholder:text-slate-500 focus:border-blue-500 focus:outline-none"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm text-slate-400 mb-1.5">
-                    Password
-                  </label>
-                  <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-2.5 text-white placeholder:text-slate-500 focus:border-blue-500 focus:outline-none"
-                    required
-                    minLength={8}
-                  />
-                </div>
-              </>
-            ) : (
+          {role === "shipper" ? (
+            <>
               <div>
-                <label className="block text-sm text-slate-400 mb-1.5">
-                  Phone Number
+                <label className="block text-sm text-gray-400 mb-1.5">
+                  Company Name
                 </label>
                 <input
-                  type="tel"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-2.5 text-white placeholder:text-slate-500 focus:border-blue-500 focus:outline-none"
-                  placeholder="+91 98765 43210"
+                  type="text"
+                  value={companyName}
+                  onChange={(e) => setCompanyName(e.target.value)}
+                  className="w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-3.5 py-2.5 text-sm text-white placeholder:text-gray-600 focus:border-blue-500/50 focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition-colors"
+                />
+              </div>
+              <div>
+                <label className="block text-sm text-gray-400 mb-1.5">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-3.5 py-2.5 text-sm text-white placeholder:text-gray-600 focus:border-blue-500/50 focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition-colors"
                   required
                 />
               </div>
-            )}
+              <div>
+                <label className="block text-sm text-gray-400 mb-1.5">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-3.5 py-2.5 text-sm text-white placeholder:text-gray-600 focus:border-blue-500/50 focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition-colors"
+                  required
+                  minLength={8}
+                />
+              </div>
+            </>
+          ) : (
+            <div>
+              <label className="block text-sm text-gray-400 mb-1.5">
+                Phone Number
+              </label>
+              <input
+                type="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                className="w-full rounded-lg border border-white/[0.08] bg-white/[0.03] px-3.5 py-2.5 text-sm text-white placeholder:text-gray-600 focus:border-blue-500/50 focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition-colors"
+                placeholder="+91 98765 43210"
+                required
+              />
+            </div>
+          )}
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full rounded-lg bg-blue-600 py-2.5 text-sm font-semibold text-white hover:bg-blue-500 transition-colors disabled:opacity-50"
-            >
-              {loading ? "Creating account..." : "Create Account"}
-            </button>
-          </form>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full flex items-center justify-center gap-2 rounded-lg bg-blue-600 py-2.5 text-sm font-semibold text-white hover:bg-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+            {loading ? "Creating account..." : "Create Account"}
+          </button>
+        </form>
 
-          <p className="mt-6 text-center text-sm text-slate-500">
+        <div className="mt-8 pt-6 border-t border-white/[0.06]">
+          <p className="text-center text-sm text-gray-500">
             Already have an account?{" "}
             <Link
               href="/auth/login"
-              className="text-blue-400 hover:text-blue-300"
+              className="text-blue-400 hover:text-blue-300 font-medium"
             >
               Sign in
             </Link>

@@ -7,7 +7,7 @@ helper function from Phase 1.17.
 """
 
 import logging
-from typing import Any
+from typing import Any, cast
 
 from services.db import DBService, db_service
 from settings import settings
@@ -59,7 +59,7 @@ class ClusteringService:
                     },
                 ).execute()
 
-                entities = result.data or []
+                entities = cast(list[dict[str, Any]], result.data) if result.data else []
 
                 # Count pending shipments and available vehicles
                 pending_shipments = [

@@ -7,13 +7,13 @@ version: "3.9"
 services:
   # ---- OSRM Router (self-hosted, India OSM extract) ----
   osrm:
-    image: ghcr.io/project-osrm/osrm-backend:v5.27.1
+    image: osrm/osrm-backend:latest
     container_name: smartlogix-osrm
     ports:
       - "5000:5000"
     volumes:
       - ./infra/osrm/data:/data
-    command: osrm-routed --algorithm mld /data/india-latest.osrm
+    command: osrm-routed --algorithm mld /data/region.osrm
     restart: unless-stopped
 
   # ---- Go CVRPTW Solver ----
@@ -41,6 +41,8 @@ services:
       - "8000:8000"
     env_file:
       - .env
+    volumes:
+      - ./apps/gateway:/app
     environment:
       SOLVER_HOST: solver
       SOLVER_PORT: "8081"
@@ -59,6 +61,9 @@ services:
       - "3000:3000"
     env_file:
       - .env
+    volumes:
+      - ./apps/web:/app
+      - /app/node_modules
     depends_on:
       - gateway
     restart: unless-stopped

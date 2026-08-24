@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -6,7 +6,10 @@ export const metadata: Metadata = {
   description:
     "Zero-hardware, cloud-native platform that consolidates India's LTL freight into algorithmically routed, multi-stop loads with reverse-bidding and GLEC carbon savings.",
   manifest: "/manifest.json",
-  themeColor: "#0066ff",
+};
+
+export const viewport: Viewport = {
+  themeColor: "#030712",
 };
 
 export default function RootLayout({
@@ -15,10 +18,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <head>
         <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
           rel="stylesheet"
         />
         <link
@@ -26,7 +29,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="antialiased">{children}</body>
+      <body className="antialiased bg-gray-950 text-gray-100" suppressHydrationWarning>{children}</body>
     </html>
   );
 }

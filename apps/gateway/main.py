@@ -45,7 +45,7 @@ app = FastAPI(
 
 # Attach rate limiter
 app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)  # type: ignore
 
 # CORS middleware
 app.add_middleware(
@@ -89,7 +89,7 @@ async def add_request_id_and_log(request: Request, call_next):
 
 
 @app.exception_handler(Exception)
-async def global_exception_handler(request: Request, exc: Exception):
+async def global_exception_handler(request: Request, exc: Exception) -> JSONResponse:
     """Return a consistent JSON error shape for all unhandled exceptions."""
     request_id = getattr(request.state, "request_id", "unknown")
     logger.error(f"Unhandled exception: {exc}", exc_info=True)
@@ -117,7 +117,7 @@ app.include_router(routes.router)
 
 
 @app.get("/health")
-async def health_check():
+async def health_check() -> dict[str, str]:
     """Health check endpoint."""
     return {
         "status": "healthy",
@@ -126,7 +126,7 @@ async def health_check():
 
 
 @app.get("/")
-async def root():
+async def root() -> dict[str, str]:
     """Root endpoint with API info."""
     return {
         "name": "SmartLogix Gateway API",

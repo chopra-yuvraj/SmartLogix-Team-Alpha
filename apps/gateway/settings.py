@@ -52,9 +52,11 @@ class Settings(BaseSettings):
     twilio_auth_token: str = ""
     twilio_whatsapp_from: str = ""
 
+    solver_url_override: str = ""
+
     @property
     def solver_url(self) -> str:
-        return f"http://{self.solver_host}:{self.solver_port}"
+        return self.solver_url_override or f"http://{self.solver_host}:{self.solver_port}"
 
     @property
     def cors_origins(self) -> list[str]:
