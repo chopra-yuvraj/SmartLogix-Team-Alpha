@@ -116,6 +116,7 @@ app.include_router(routes.router)
 # ============================================================
 
 
+@app.head("/health")
 @app.get("/health")
 async def health_check() -> dict[str, str]:
     """Health check endpoint."""

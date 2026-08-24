@@ -29,7 +29,7 @@ func main() {
 	defer logger.Sync()
 
 	// Read configuration from environment
-	port := getEnv("SOLVER_PORT", "8081")
+	port := getEnv("PORT", "8081")
 	osrmURL := getEnv("OSRM_BASE_URL", "http://localhost:5000")
 
 	// Initialize OSRM client
@@ -50,10 +50,12 @@ func main() {
 	r.Use(middleware.Recoverer)
 
 	// Health check
-	r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
+	healthHandler := func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Write([]byte(`{"status":"healthy","service":"smartlogix-solver"}`))
-	})
+	}
+	r.Get("/health", healthHandler)
+	r.Head("/health", healthHandler)
 
 	// Solver endpoint (internal, called by FastAPI gateway)
 	r.Post("/route/optimize", handler.HandleOptimize)
