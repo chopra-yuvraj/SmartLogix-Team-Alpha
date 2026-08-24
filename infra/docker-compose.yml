@@ -1,0 +1,29 @@
+# SmartLogix — Local Development Docker Compose
+# Usage: docker compose -f infra/docker-compose.yml up -d
+#
+# Supabase local dev is managed via `supabase start` (Supabase CLI),
+# not via this compose file, because the CLI handles all Supabase
+# services (Postgres, Auth, Storage, Realtime, Studio) as a unit.
+
+version: "3.9"
+
+services:
+  # ----------------------------------------------------------
+  # OSRM — Self-hosted Open Source Routing Machine
+  # Pre-processed data must exist in infra/osrm/data/
+  # Run infra/osrm/setup.sh first to prepare the data.
+  # ----------------------------------------------------------
+  osrm:
+    image: osrm/osrm-backend:v5.27.1
+    container_name: smartlogix-osrm
+    ports:
+      - "${OSRM_PORT:-5000}:5000"
+    volumes:
+      - ./osrm/data:/data
+    command: osrm-routed --algorithm mld /data/region.osrm
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3

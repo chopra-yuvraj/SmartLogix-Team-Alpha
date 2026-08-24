@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+:root {
+  --color-primary: #0066ff;
+  --color-primary-dark: #0052cc;
+  --color-secondary: #10b981;
+  --color-accent: #f59e0b;
+  --color-danger: #ef4444;
+  --color-surface: #ffffff;
+  --color-surface-dark: #0f172a;
+  --color-text: #1e293b;
+  --color-text-muted: #64748b;
+  --color-border: #e2e8f0;
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-surface: #0f172a;
+    --color-text: #f1f5f9;
+    --color-text-muted: #94a3b8;
+    --color-border: #1e293b;
+  }
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-text);
+  background: var(--color-surface);
+}
+
+/* MapLibre GL container */
+.maplibregl-map {
+  width: 100%;
+  height: 100%;
+}

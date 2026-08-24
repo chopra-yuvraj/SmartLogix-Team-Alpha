@@ -1,0 +1,44 @@
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Node
+node_modules/
+.next/
+out/
+dist/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# Go
+apps/solver/solver
+apps/solver/cmd/solver/solver
+
+# OSRM data (large, downloaded at build time)
+infra/osrm/data/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Supabase local
+supabase/.temp/
+
+# Test / coverage
+coverage/
+htmlcov/
+.coverage
+*.lcov
+
+# Progress tracking (local only)
+progress.md

@@ -1,0 +1,18 @@
+{
+  "name": "@smartlogix/shared-types",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shared API contract schemas for SmartLogix",
+  "main": "index.ts",
+  "types": "index.ts",
+  "scripts": {
+    "lint": "tsc --noEmit",
+    "check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "^3.22.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0"
+  }
+}
